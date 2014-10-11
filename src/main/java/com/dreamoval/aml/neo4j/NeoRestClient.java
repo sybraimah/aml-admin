@@ -1,5 +1,6 @@
 package com.dreamoval.aml.neo4j;
 
+import com.dreamoval.aml.model.Response;
 import com.dreamoval.aml.model.nodes.Account;
 import com.dreamoval.aml.model.nodes.Customer;
 import com.dreamoval.aml.model.nodes.Institution;
@@ -103,19 +104,29 @@ public class NeoRestClient {
         return "";
     }
 
-    public Object runQuery(MultiValueMap<String,String> map, Class clazz){
+    public String updateNode(String id){
         String url = baseUrl+"/cypher";
         try{
             RestTemplate rest = new RestTemplate();
 //            HttpHeaders headers = new HttpHeaders();
 //            headers.setContentType(MediaType.APPLICATION_JSON);
-
-//            MultiValueMap<String,String> map = new LinkedMultiValueMap<String, String>();
-//            map.add("name","Steve");
+            MultiValueMap<String,String> map = new LinkedMultiValueMap<String, String>();
+            map.add("query","MATCH (:Transaction {id:"+id+"})<-[:Has]-(:Account)<-[:Owns]-(c:Customer) SET c.riskScore = (c.riskScore + 1) return c");
 //            HttpEntity<String> entity = new HttpEntity<String>(node,headers);
 
-            Object result = rest.postForEntity(url,map,clazz);
-            return result;
+            ResponseEntity<String> result = rest.postForEntity(url,map,String.class);
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+        return "";
+    }
+
+    public Response runQuery(MultiValueMap<String,String> map){
+        String url = baseUrl+"/cypher";
+        try{
+            RestTemplate rest = new RestTemplate();
+            ResponseEntity<Response> result = rest.postForEntity(url,map, Response.class);
+            return result.getBody();
         }catch(Exception e){
             System.out.println(e.getMessage());
         }
