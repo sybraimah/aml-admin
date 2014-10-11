@@ -2,7 +2,9 @@ package com.dreamoval.aml.services;
 
 import com.dreamoval.aml.model.Response;
 import com.dreamoval.aml.model.nodes.Transaction;
+import com.dreamoval.aml.mongo.domain.ITransaction;
 import com.dreamoval.aml.mongo.domain.Rule;
+import com.dreamoval.aml.mongo.services.ITransactionService;
 import com.dreamoval.aml.mongo.services.RuleService;
 import com.dreamoval.aml.neo4j.NeoRestClient;
 import com.google.gson.Gson;
@@ -24,8 +26,27 @@ public class MonitoringService {
 
     @Autowired
     RuleService ruleService;
+
+    @Autowired
+    ITransactionService transactionService;
+
     //run query
     public String runQueries(Transaction transaction){
+        ITransaction tx = new ITransaction();
+
+        tx.setAmount(transaction.getAmount());
+        tx.setDate(transaction.getDate());
+        tx.setDestination(transaction.getDestination());
+        tx.setSource(transaction.getSource());
+        tx.setId(transaction.getId());
+        tx.setDestinationAccount(transaction.getDestinationAccount().getNumber());
+        tx.setSourceAccount(transaction.getSourceAccount().getNumber());
+        tx.setNarrative(transaction.getNarrative());
+        tx.setType(transaction.getType());
+        tx.setFlag(transaction.getFlag());
+
+        transactionService.save(tx);
+
         //get queries
         List<Rule> rules = ruleService.findAll();
 
@@ -34,7 +55,8 @@ public class MonitoringService {
             MultiValueMap<String,String> map = new LinkedMultiValueMap<String, String>();
 
             //run for source
-            map.add("query",parseQuery(rule.getQuery(),transaction.getId(),transaction.getSourceAccount().getId()));
+            map.add("query",parseQuery(rule.getQuery(),transaction.getSourceAccount().getCustomer().getId(),
+                    transaction.getSourceAccount().getId()));
             Gson gson = new Gson();
             Response result = rest.runQuery(map);
             if(result.getData().size()>0){
@@ -47,8 +69,10 @@ public class MonitoringService {
 
             //run for destination
             map.clear();
-            map.add("query",parseQuery(rule.getQuery(),transaction.getId(),transaction.getDestinationAccount().getId()));
+            map.add("query",parseQuery(rule.getQuery(),transaction.getSourceAccount().getCustomer().getId(),
+                    transaction.getDestinationAccount().getId()));
             result = rest.runQuery(map);
+
             if(result.getData().size()>0){
                 //get query for for updating customer
                 rest.updateNode(String.valueOf(transaction.getDestinationAccount().getId()));
@@ -64,12 +88,12 @@ public class MonitoringService {
 
 
 
-        return "";
+        return "done";
     }
 
-    public String parseQuery(String query,long transactionId, long accountId){
-        query = query.replaceAll("%t",String.valueOf(transactionId));
-        query = query.replaceAll("%F",String.valueOf(accountId));
+    public String parseQuery(String query,long customer, long accountId){
+//        query = query.replaceAll("%t",String.valueOf(transactionId));
+        query = query.replaceAll("<account_no>",String.valueOf(accountId));
         return query;
     }
 

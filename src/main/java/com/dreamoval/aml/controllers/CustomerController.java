@@ -35,15 +35,15 @@ public class CustomerController {
     @Autowired
     NeoRestClient neo;
 
-    @RequestMapping(value = "/customer/all", method = RequestMethod.POST, consumes = "application/json")
+    @RequestMapping(value = "/customer/all")
     public @ResponseBody
     Object getCustomers() {
         return neo.getCustomers();
     }
 
-    @RequestMapping(value = "/customer/get", method = RequestMethod.POST, consumes = "application/json")
+    @RequestMapping(value = "/customer/get", method = RequestMethod.POST)
     public @ResponseBody
-    Customer fetchCustomer(Long customerId) {
+    Object fetchCustomer(@RequestParam(value="customerId") String customerId) {
         return neo.getCustomerById(customerId);
     }
 

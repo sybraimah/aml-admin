@@ -4,7 +4,6 @@
  */
 package com.dreamoval.aml.controllers;
 
-import com.dreamoval.aml.model.nodes.Customer;
 import com.dreamoval.aml.model.nodes.Institution;
 import com.dreamoval.aml.neo4j.NeoRestClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +21,13 @@ public class InstitutionController {
     @Autowired
     NeoRestClient neo;
     
-    @RequestMapping(value="/fi/all", method=RequestMethod.POST, consumes="application/json")
+    @RequestMapping(value="/fi/all")
     public @ResponseBody Object getInstitutions(){
         return neo.getInstitutions();
     }
     
     @RequestMapping(value="/fi/get", method=RequestMethod.POST, consumes="application/json")
-    public @ResponseBody Institution fetchInstitution(String shortName){
+    public @ResponseBody Object fetchInstitution(String shortName){
         return neo.getInstitutionByShortName(shortName);
     }
     

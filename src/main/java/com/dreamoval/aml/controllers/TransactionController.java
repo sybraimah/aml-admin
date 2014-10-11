@@ -54,7 +54,7 @@ public class TransactionController {
 
     @RequestMapping(value = "/transaction/get", method = RequestMethod.POST, consumes = "application/json")
     public @ResponseBody
-    Transaction fetchTransaction(Long transactionId) {
+    Object fetchTransaction(Long transactionId) {
         return neo.getTransactionById(transactionId);
     }
 
