@@ -1,5 +1,6 @@
 package com.dreamoval.aml.neo4j;
 
+import com.dreamoval.aml.model.Response;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -53,7 +54,7 @@ public class NeoRestClient {
         return "";
     }
 
-    public String runQuery(MultiValueMap<String,String> map){
+    public Response runQuery(MultiValueMap<String,String> map){
         String url = baseUrl+"/cypher";
         try{
             RestTemplate rest = new RestTemplate();
@@ -64,13 +65,13 @@ public class NeoRestClient {
 //            map.add("name","Steve");
 //            HttpEntity<String> entity = new HttpEntity<String>(node,headers);
 
-            ResponseEntity<String> result = rest.postForEntity(url,map,String.class);
-            return result.toString();
+            ResponseEntity<Response> result = rest.postForEntity(url,map,Response.class);
+            return result.getBody();
 
         }catch(Exception e){
             System.out.println(e.getMessage());
         }
-        return "";
+        return null;
     }
 
     public String call(RestTemplate rest){

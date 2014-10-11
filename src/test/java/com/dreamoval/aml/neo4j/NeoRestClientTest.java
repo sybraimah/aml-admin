@@ -1,6 +1,8 @@
 package com.dreamoval.aml.neo4j;
 
 import com.dreamoval.aml.Application;
+import com.dreamoval.aml.model.Response;
+import com.google.gson.Gson;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +23,12 @@ public class NeoRestClientTest {
     public void testAddNode() throws Exception {
 //        rest.addNode("{\"name\":\"Stephen\"}");
         MultiValueMap<String,String> map = new LinkedMultiValueMap<String, String>();
-        map.add("query","MATCH (n:`Account`)<-[:Owns]-(c:Customer {id:'001'}) RETURN n LIMIT 25");
-        System.out.println(rest.runQuery(map));
+        map.add("query","MATCH (n:`Account`)<-[:Owns]-(c:Customer {id:'10'}) RETURN n LIMIT 25");
+        Gson gson = new Gson();
+        Response result = rest.runQuery(map);
+
+        System.out.println(result);
+//        Response response = gson.fromJson(result,Response.class);
+
     }
 }
