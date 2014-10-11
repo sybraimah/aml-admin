@@ -1,5 +1,6 @@
 package com.dreamoval.aml.model.nodes;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.Set;
 import org.neo4j.graphdb.Direction;
 import org.springframework.data.neo4j.annotation.Fetch;
@@ -18,12 +19,12 @@ public class Customer {
     private String name;
     private boolean kycVerified;
     private int riskScore;
-
+    @JsonIgnoreProperties
     @RelatedTo(type = "Owns", direction = Direction.OUTGOING)
     public @Fetch
     Set<Account> accounts;
-    
-    public Long getId(){
+
+    public Long getId() {
         return id;
     }
 
@@ -52,11 +53,11 @@ public class Customer {
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         String results = name + "'s accounts are";
-        if(accounts!=null){
-            for(Account account: accounts){
-                results +="\t- "+account.getNumber()+"\n";
+        if (accounts != null) {
+            for (Account account : accounts) {
+                results += "\t- " + account.getNumber() + "\n";
             }
         }
         return results;

@@ -13,6 +13,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 @EnableMongoRepositories
 @ComponentScan(basePackages = "com.dreamoval.aml.mongo")
 public class MongoConfiguration extends AbstractMongoConfiguration {
+
     @Override
     protected String getDatabaseName() {
         return "smpp-client";

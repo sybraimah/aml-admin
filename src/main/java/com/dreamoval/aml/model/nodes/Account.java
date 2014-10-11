@@ -13,23 +13,22 @@ import org.springframework.data.neo4j.annotation.RelatedTo;
  */
 @NodeEntity
 public class Account {
-    
+
     @GraphId
     private Long id;
     private String accountNumber;
     private Double balance;
     private Date dateOpened;
+    private String accountType;
     private String status;
-    
     @RelatedTo(type = "Owns", direction = Direction.INCOMING)
-    private @Fetch    
+    private @Fetch
     Customer customer;
-    
     @RelatedTo(type = "Holds", direction = Direction.INCOMING)
     private @Fetch
     Institution institution;
 
-    public Long getId(){
+    public Long getId() {
         return id;
     }
 
@@ -91,5 +90,29 @@ public class Account {
      */
     public void setInstitution(Institution institution) {
         this.institution = institution;
+    }
+
+    public String getAccountNumber() {
+        return accountNumber;
+    }
+
+    public void setAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
+    }
+
+    public Date getDateOpened() {
+        return dateOpened;
+    }
+
+    public void setDateOpened(Date dateOpened) {
+        this.dateOpened = dateOpened;
+    }
+
+    public String getAccountType() {
+        return accountType;
+    }
+
+    public void setAccountType(String accountType) {
+        this.accountType = accountType;
     }
 }
