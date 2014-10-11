@@ -77,7 +77,7 @@ public class NeoRestClient {
             map.add("query", query);
             
             Response result = runQuery(map);
-            return responseToObject(result);
+            return responseToCollection(result);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return null;
@@ -91,9 +91,9 @@ public class NeoRestClient {
             MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
             String query = String.format("MATCH (c:Customer {id: %d})-[:Owns]->(:Account)-[:Has]->(t:Transaction) return t");
             map.add("query", query);
-            
+                        
             Response result = runQuery(map);
-            return responseToObject(result);
+            return responseToCollection(result);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return null;
@@ -116,45 +116,48 @@ public class NeoRestClient {
         return true;
     }
 
-    public Iterable<Account> getAccounts() {
+    public Object getAccounts() {
         String url = baseUrl + "/node";
         try {
             RestTemplate rest = new RestTemplate();
             MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
             String query = String.format("MATCH (a:Account) return a");
             map.add("query", query);
-            ResponseEntity<Iterable> result = rest.postForEntity(url, map, Iterable.class);
-            return (Iterable<Account>) result.getBody();
+                        
+            Response result = runQuery(map);
+            return responseToCollection(result);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return null;
         }
     }
 
-    public Account getAccountByNumber(String accountNumber) {
+    public Object getAccountByNumber(String accountNumber) {
         String url = baseUrl + "/node";
         try {
             RestTemplate rest = new RestTemplate();
             MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
             String query = String.format("MATCH (a:Account {accountNumber: %s}) return a", accountNumber);
             map.add("query", query);
-            ResponseEntity<Account> result = rest.postForEntity(url, map, Account.class);
-            return result.getBody();
+            
+            Response result = runQuery(map);
+            return responseToObject(result);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return null;
         }
     }
 
-    public Iterable<Transaction> getAccountTransactions(String accountNumber) {
+    public Object getAccountTransactions(String accountNumber) {
         String url = baseUrl + "/node";
         try {
             RestTemplate rest = new RestTemplate();
             MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
             String query = String.format("MATCH (a:Account {accountNumber: '%s'})-[:Has]->(t:Transaction) return t", accountNumber);
             map.add("query", query);
-            ResponseEntity<Iterable> result = rest.postForEntity(url, map, Iterable.class);
-            return (Iterable<Transaction>) result.getBody();
+            
+            Response result = runQuery(map);
+            return responseToCollection(result);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return null;
@@ -180,30 +183,32 @@ public class NeoRestClient {
         return true;
     }
 
-    public Iterable<Transaction> getTransactions() {
+    public Object getTransactions() {
         String url = baseUrl + "/node";
         try {
             RestTemplate rest = new RestTemplate();
             MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
             String query = String.format("MATCH (t:Transaction) return t");
             map.add("query", query);
-            ResponseEntity<Iterable> result = rest.postForEntity(url, map, Iterable.class);
-            return (Iterable<Transaction>) result.getBody();
+            
+            Response result = runQuery(map);
+            return responseToCollection(result);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return null;
         }
     }
 
-    public Transaction getTransactionById(Long transactionId) {
+    public Object getTransactionById(Long transactionId) {
         String url = baseUrl + "/node";
         try {
             RestTemplate rest = new RestTemplate();
             MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
             String query = String.format("MATCH (t:Transactoin {id: %d}) return t", transactionId);
             map.add("query", query);
-            ResponseEntity<Transaction> result = rest.postForEntity(url, map, Transaction.class);
-            return result.getBody();
+            
+            Response result = runQuery(map);
+            return responseToObject(result);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return null;
@@ -226,45 +231,48 @@ public class NeoRestClient {
         return true;
     }
 
-    public Iterable<Institution> getInstitutions() {
+    public Object getInstitutions() {
         String url = baseUrl + "/node";
         try {
             RestTemplate rest = new RestTemplate();
             MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
             String query = String.format("MATCH (i:FI) return i");
             map.add("query", query);
-            ResponseEntity<Iterable> result = rest.postForEntity(url, map, Iterable.class);
-            return (Iterable<Institution>) result.getBody();
+            
+            Response result = runQuery(map);
+            return responseToCollection(result);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return null;
         }
     }
 
-    public Institution getInstitutionByShortName(String shortName) {
+    public Object getInstitutionByShortName(String shortName) {
         String url = baseUrl + "/node";
         try {
             RestTemplate rest = new RestTemplate();
             MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
             String query = String.format("MATCH (i:FI {shortName: '%s'}) return i", shortName);
             map.add("query", query);
-            ResponseEntity<Institution> result = rest.postForEntity(url, map, Institution.class);
-            return result.getBody();
+            
+            Response result = runQuery(map);
+            return responseToObject(result);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return null;
         }
     }
 
-    public Iterable<Account> getAccountsForInstitution(String shortName) {
+    public Object getAccountsForInstitution(String shortName) {
         String url = baseUrl + "/node";
         try {
             RestTemplate rest = new RestTemplate();
             MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
             String query = String.format("MATCH (i:FI {shortName: '%s'})-[:Holds]->(a:Account) return a", shortName);
             map.add("query", query);
-            ResponseEntity<Iterable> result = rest.postForEntity(url, map, Iterable.class);
-            return (Iterable<Account>) result.getBody();
+            
+            Response result = runQuery(map);
+            return responseToCollection(result);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return null;
