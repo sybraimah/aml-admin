@@ -21,13 +21,13 @@ public class AccountController {
     @Autowired
     NeoRestClient neo;
     
-    @RequestMapping(value="/account/all", method=RequestMethod.POST, consumes="application/json")
+    @RequestMapping(value="/account/all")
     public @ResponseBody Object getAccounts(){
         return neo.getAccounts();
     }
     
     @RequestMapping(value="/account/get", method=RequestMethod.POST, consumes="application/json")
-    public @ResponseBody Account fetchAccount(String accountNumber){
+    public @ResponseBody Object fetchAccount(String accountNumber){
         return neo.getAccountByNumber(accountNumber);
     }
     

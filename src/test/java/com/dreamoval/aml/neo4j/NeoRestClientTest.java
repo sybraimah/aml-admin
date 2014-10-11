@@ -23,11 +23,11 @@ public class NeoRestClientTest {
     public void testAddNode() throws Exception {
 //        rest.addNode("{\"name\":\"Stephen\"}");
         MultiValueMap<String,String> map = new LinkedMultiValueMap<String, String>();
-        map.add("query","MATCH (n:`Account`)<-[:Owns]-(c:Customer {id:'10'}) RETURN n LIMIT 25");
+        map.add("query","MATCH (n:`Account`)<-[:Owns]-(c:Customer {id:'005'}) RETURN n LIMIT 25");
         Gson gson = new Gson();
         Response result = rest.runQuery(map);
 
-//        System.out.println(result);
+        System.out.println(result.getData());
 //        Response response = gson.fromJson(result,Response.class);
 
     }

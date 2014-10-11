@@ -28,7 +28,7 @@ public class TransactionController {
     @Autowired
     private NeoRestClient neo;
 
-    @RequestMapping(value = "/send/transactions", method = RequestMethod.POST, consumes = "application/json")
+    @RequestMapping(value = "/send/transactions")
     @ResponseBody
     public JSONResponse sendTransactions(
             @RequestParam("transaction") String transaction,
@@ -54,7 +54,7 @@ public class TransactionController {
 
     @RequestMapping(value = "/transaction/get", method = RequestMethod.POST, consumes = "application/json")
     public @ResponseBody
-    Transaction fetchTransaction(Long transactionId) {
+    Object fetchTransaction(Long transactionId) {
         return neo.getTransactionById(transactionId);
     }
 
