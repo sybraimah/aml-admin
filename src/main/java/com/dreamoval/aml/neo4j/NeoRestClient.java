@@ -1,16 +1,15 @@
 package com.dreamoval.aml.neo4j;
 
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
+import com.dreamoval.aml.model.nodes.Account;
+import com.dreamoval.aml.model.nodes.Customer;
+import com.dreamoval.aml.model.nodes.Institution;
+import com.dreamoval.aml.model.nodes.Transaction;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by dreamadmin on 10/11/14.
@@ -20,20 +19,71 @@ public class NeoRestClient {
 
     String baseUrl = "http://192.168.0.235:7474/db/data/";
 
-    public String addCustomer(){
-        return "";
+    public boolean addCustomer(Customer customer){
+        String url = baseUrl+"/node";
+        try{
+            RestTemplate rest = new RestTemplate();
+            MultiValueMap<String,String> map = new LinkedMultiValueMap<>();
+            String query = String.format("CREATE UNIQUE (:Customer {name: '%s', kycVerified: %s, riskScore: %d})", customer.getName(), customer.isKycVerified(), customer.getRiskScore());
+            map.add("query",query);
+
+            rest.postForEntity(url,map,Customer.class);
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+            return false;
+        }
+        return true;
     }
 
-    public String addAccount(){
-        return "";
+    public boolean addAccount(Customer customer, Account account){
+        String url = baseUrl+"/node";
+        try{
+            RestTemplate rest = new RestTemplate();
+            MultiValueMap<String,String> map = new LinkedMultiValueMap<>();
+            String query = String.format("MATCH (c:Customer {id: %d}) CREATE UNIQUE (c)-[:Owns]->(:Account {accountNumber: '%s', balance: 0, dateOpened: %d, status: 'ACTIVE'})", customer.getId(), account.getNumber(), account.getOpened().getTime());
+            map.add("query",query);
+
+            rest.postForEntity(url,map,Account.class);
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+            return false;
+        }
+        return true;
     }
 
-    public String addTransaction(){
-        return "";
+    public boolean addTransaction(Transaction transaction, Account sourceAccount, Account destinationAccount){
+        String url = baseUrl+"/node";
+        try{
+            RestTemplate rest = new RestTemplate();
+            MultiValueMap<String,String> map = new LinkedMultiValueMap<>();
+            String query = String.format("MATCH (a:Account {id: %d}) CREATE UNIQUE (a)-[:Has]->(:Transaction {narrative: '%s', type: '%s', source: '%s', destination: '%s', flag: '%s', amount: '%f', date: '%d'})", sourceAccount.getId(), transaction.getNarrative(), sourceAccount.getNumber(), destinationAccount.getNumber(), transaction.getFlag(), transaction.getAmount(), transaction.getDate().getTime());
+            map.add("query",query);
+            rest.postForEntity(url,map,Transaction.class);
+            
+            query = String.format("MATCH (b:Account {id: %d}), (t:Transaction {id: %d}) CREATE UNIQUE (b)-[:Has]->(t)", destinationAccount.getId(), transaction.getId());
+            map.add("query",query);
+            rest.postForEntity(url,map,Account.class);
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+            return false;
+        }
+        return true;
     }
 
-    public String addFinancialInstitute(){
-        return "";
+    public boolean addFinancialInstitution(Institution institution){
+        String url = baseUrl+"/node";
+        try{
+            RestTemplate rest = new RestTemplate();
+            MultiValueMap<String,String> map = new LinkedMultiValueMap<>();
+            String query = String.format("CREATE UNIQUE (:FI {name: '%s', shortName: '%s', country: '%s'})", institution.getName(), institution.getShortName(), institution.getCountry());
+            map.add("query",query);
+
+            rest.postForEntity(url,map,Customer.class);
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+            return false;
+        }
+        return true;
     }
 
     public String addNode(MultiValueMap<String,String> map){
@@ -53,7 +103,7 @@ public class NeoRestClient {
         return "";
     }
 
-    public String runQuery(MultiValueMap<String,String> map){
+    public Object runQuery(MultiValueMap<String,String> map, Class clazz){
         String url = baseUrl+"/cypher";
         try{
             RestTemplate rest = new RestTemplate();
@@ -64,13 +114,12 @@ public class NeoRestClient {
 //            map.add("name","Steve");
 //            HttpEntity<String> entity = new HttpEntity<String>(node,headers);
 
-            ResponseEntity<String> result = rest.postForEntity(url,map,String.class);
-            return result.toString();
-
+            Object result = rest.postForEntity(url,map,clazz);
+            return result;
         }catch(Exception e){
             System.out.println(e.getMessage());
         }
-        return "";
+        return null;
     }
 
     public String call(RestTemplate rest){

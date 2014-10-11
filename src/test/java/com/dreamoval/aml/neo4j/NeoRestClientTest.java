@@ -22,6 +22,6 @@ public class NeoRestClientTest {
 //        rest.addNode("{\"name\":\"Stephen\"}");
         MultiValueMap<String,String> map = new LinkedMultiValueMap<String, String>();
         map.add("query","MATCH (n:`Account`)<-[:Owns]-(c:Customer {id:'001'}) RETURN n LIMIT 25");
-        System.out.println(rest.runQuery(map));
+        System.out.println(rest.runQuery(map, String.class));
     }
 }
