@@ -14,12 +14,12 @@ import org.springframework.data.neo4j.annotation.NodeEntity;
 @NodeEntity
 public class Institution {
     @GraphId
-    private Long id;
+    private String id;
     private String name;
     private String shortName;
     private String country;
     
-    public Long getId(){
+    public String getId(){
         return id;
     }
 

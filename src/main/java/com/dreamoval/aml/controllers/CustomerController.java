@@ -69,7 +69,7 @@ public class CustomerController {
 
     @RequestMapping(value = "/customer/accounts", method = RequestMethod.POST, consumes = "application/json")
     public @ResponseBody
-    Object getCustomerAccounts(Long customerId) {
+    Object getCustomerAccounts(String customerId) {
         return neo.getAccountsForCustomer(customerId);
     }
 

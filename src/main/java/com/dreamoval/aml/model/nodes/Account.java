@@ -15,7 +15,7 @@ import org.springframework.data.neo4j.annotation.RelatedTo;
 public class Account {
 
     @GraphId
-    private Long id;
+    private String id;
     private String accountNumber;
     private Double balance;
     private Date dateOpened;
@@ -28,7 +28,7 @@ public class Account {
     private @Fetch
     Institution institution;
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 

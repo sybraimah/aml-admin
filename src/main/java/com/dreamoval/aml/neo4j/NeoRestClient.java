@@ -6,7 +6,7 @@ import com.dreamoval.aml.model.nodes.Customer;
 import com.dreamoval.aml.model.nodes.Institution;
 import com.dreamoval.aml.model.nodes.Transaction;
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.http.ResponseEntity;
@@ -45,7 +45,7 @@ public class NeoRestClient {
             MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
             map.add("query", "MATCH (c:Customer) return c");
             Response result = runQuery(map);
-            
+
             return responseToCollection(result);
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -68,16 +68,20 @@ public class NeoRestClient {
         }
     }
 
-    public Object getAccountsForCustomer(Long customerId) {
+    public Object getAccountsForCustomer(String customerId) {
         String url = baseUrl + "/node";
         try {
             RestTemplate rest = new RestTemplate();
             MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
-            String query = String.format("MATCH (c:Customer {id: %d})-[:Owns]->(a:Account) return a", customerId);
+            String query = String.format("MATCH (c:Customer {id: '%s'})-[:Owns]->(a:Account) return a", customerId);
             map.add("query", query);
-            
+
             Response result = runQuery(map);
-            return responseToCollection(result);
+            ArrayList hashMap = (ArrayList) responseToCollection(result);
+            if (null != hashMap) {
+                return hashMap.get(0);
+            }
+            return null;
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return null;
@@ -91,7 +95,7 @@ public class NeoRestClient {
             MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
             String query = String.format("MATCH (c:Customer {id: %d})-[:Owns]->(:Account)-[:Has]->(t:Transaction) return t");
             map.add("query", query);
-                        
+
             Response result = runQuery(map);
             return responseToCollection(result);
         } catch (Exception e) {
@@ -123,7 +127,7 @@ public class NeoRestClient {
             MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
             String query = String.format("MATCH (a:Account) return a");
             map.add("query", query);
-                        
+
             Response result = runQuery(map);
             return responseToCollection(result);
         } catch (Exception e) {
@@ -139,7 +143,7 @@ public class NeoRestClient {
             MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
             String query = String.format("MATCH (a:Account {accountNumber: %s}) return a", accountNumber);
             map.add("query", query);
-            
+
             Response result = runQuery(map);
             return responseToObject(result);
         } catch (Exception e) {
@@ -155,7 +159,7 @@ public class NeoRestClient {
             MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
             String query = String.format("MATCH (a:Account {accountNumber: '%s'})-[:Has]->(t:Transaction) return t", accountNumber);
             map.add("query", query);
-            
+
             Response result = runQuery(map);
             return responseToCollection(result);
         } catch (Exception e) {
@@ -164,12 +168,12 @@ public class NeoRestClient {
         }
     }
 
-    public boolean addTransaction(Transaction transaction, Account sourceAccount, Account destinationAccount) {
+    public boolean addTransaction(Transaction transaction, String sourceAccount, String destinationAccount) {
         String url = baseUrl + "/node";
         try {
             RestTemplate rest = new RestTemplate();
             MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
-            String query = String.format("MATCH (a:Account {accountNumber: '%s'}) CREATE UNIQUE (a)-[:Has]->(:Transaction {narrative: '%s', type: '%s', source: '%s', destination: '%s', flag: '%s', amount: '%f', date: '%d'})", transaction.getSource(), transaction.getNarrative(), sourceAccount.getNumber(), destinationAccount.getNumber(), transaction.getFlag(), transaction.getAmount(), transaction.getDate().getTime());
+            String query = String.format("MATCH (a:Account {accountNumber: '%s'}) CREATE UNIQUE (a)-[:Has]->(:Transaction {narrative: '%s', type: '%s', source: '%s', destination: '%s', flag: '%s', amount: '%f', date: '%d'})", transaction.getSource(), transaction.getNarrative(), sourceAccount, destinationAccount, transaction.getFlag(), transaction.getAmount(), transaction.getDate().getTime());
             map.add("query", query);
             rest.postForEntity(url, map, Transaction.class);
 
@@ -190,7 +194,7 @@ public class NeoRestClient {
             MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
             String query = String.format("MATCH (t:Transaction) return t");
             map.add("query", query);
-            
+
             Response result = runQuery(map);
             return responseToCollection(result);
         } catch (Exception e) {
@@ -206,7 +210,7 @@ public class NeoRestClient {
             MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
             String query = String.format("MATCH (t:Transactoin {id: %d}) return t", transactionId);
             map.add("query", query);
-            
+
             Response result = runQuery(map);
             return responseToObject(result);
         } catch (Exception e) {
@@ -238,7 +242,7 @@ public class NeoRestClient {
             MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
             String query = String.format("MATCH (i:FI) return i");
             map.add("query", query);
-            
+
             Response result = runQuery(map);
             return responseToCollection(result);
         } catch (Exception e) {
@@ -254,7 +258,7 @@ public class NeoRestClient {
             MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
             String query = String.format("MATCH (i:FI {shortName: '%s'}) return i", shortName);
             map.add("query", query);
-            
+
             Response result = runQuery(map);
             return responseToObject(result);
         } catch (Exception e) {
@@ -270,7 +274,7 @@ public class NeoRestClient {
             MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
             String query = String.format("MATCH (i:FI {shortName: '%s'})-[:Holds]->(a:Account) return a", shortName);
             map.add("query", query);
-            
+
             Response result = runQuery(map);
             return responseToCollection(result);
         } catch (Exception e) {
@@ -332,8 +336,8 @@ public class NeoRestClient {
 
         return node.get("data");
     }
-    
-    public Object responseToCollection(Response result){
+
+    public Object responseToCollection(Response result) {
         ArrayList list = (ArrayList) result.getData();
 
         List<Map> coll = new ArrayList<Map>();

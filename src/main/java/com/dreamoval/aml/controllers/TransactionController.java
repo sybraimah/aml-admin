@@ -4,11 +4,11 @@
  */
 package com.dreamoval.aml.controllers;
 
-import com.dreamoval.aml.model.nodes.Account;
 import com.dreamoval.aml.model.nodes.Transaction;
 import com.dreamoval.aml.neo4j.NeoRestClient;
 import com.dreamoval.aml.util.JSONResponse;
 import com.google.gson.Gson;
+import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,15 +32,16 @@ public class TransactionController {
     @ResponseBody
     public JSONResponse sendTransactions(
             @RequestParam("transaction") String transaction,
-            @RequestParam("source") String source,
-            @RequestParam("destination") String destination,
+            @RequestParam("sourceId") String sourceId,
+            @RequestParam("destinationId") String destinationId,
             HttpServletResponse response, HttpServletRequest request) {
         response.setContentType("application/json;charset=UTF-8");
         JSONResponse jSONResponse = new JSONResponse();
         Transaction t = new Gson().fromJson(transaction, Transaction.class);
-        Account s = new Gson().fromJson(transaction, Account.class);
-        Account d = new Gson().fromJson(transaction, Account.class);
-        neo.addTransaction(t, s, d);
+        t.setDate(new Date());
+//        Account s = (Account) neo.getAccountsForCustomer(sourceId);
+//        Account d = (Account) neo.getAccountsForCustomer(destinationId);
+        neo.addTransaction(t, t.getSource(), t.getDestination());
         jSONResponse.setStatus(true);
         jSONResponse.setMessage("Success");
         return jSONResponse;
@@ -60,7 +61,8 @@ public class TransactionController {
 
     @RequestMapping(value = "/transaction/create", method = RequestMethod.GET, consumes = "application/json")
     public @ResponseBody
-    boolean createTransaction(Transaction transaction) {
-        return neo.addTransaction(transaction, transaction.getSourceAccount(), transaction.getDestinationAccount());
+    boolean createTransaction(@RequestParam("transaction") String transaction) {
+        Transaction t = new Gson().fromJson(transaction, Transaction.class);
+        return neo.addTransaction(t, t.getSource(), t.getDestination());
     }
 }
