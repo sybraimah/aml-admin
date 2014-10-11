@@ -5,7 +5,6 @@
 package com.dreamoval.aml.controllers;
 
 import com.dreamoval.aml.model.nodes.Account;
-import com.dreamoval.aml.model.nodes.Customer;
 import com.dreamoval.aml.neo4j.NeoRestClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,5 +34,10 @@ public class AccountController {
     @RequestMapping(value="/account/create", method=RequestMethod.POST, consumes="application/json")
     public boolean createAccount(Account account, String customerNo){
         return neo.addAccount(account.getCustomer(), account);
+    }
+    
+    @RequestMapping(value="/account/transactions", method=RequestMethod.POST, consumes="application/json")
+    public @ResponseBody Object getAccountTransactions(String accountNumber){
+        return neo.getAccountTransactions(accountNumber);
     }
 }

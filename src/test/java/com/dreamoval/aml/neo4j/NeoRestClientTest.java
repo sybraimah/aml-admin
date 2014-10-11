@@ -25,7 +25,7 @@ public class NeoRestClientTest {
         MultiValueMap<String,String> map = new LinkedMultiValueMap<String, String>();
         map.add("query","MATCH (n:`Account`)<-[:Owns]-(c:Customer {id:'10'}) RETURN n LIMIT 25");
         Gson gson = new Gson();
-//        Object result = rest.runQuery(map, String.class);
+        Response result = rest.runQuery(map);
 
 //        System.out.println(result);
 //        Response response = gson.fromJson(result,Response.class);

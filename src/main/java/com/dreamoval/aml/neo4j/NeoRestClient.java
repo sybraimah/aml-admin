@@ -81,6 +81,21 @@ public class NeoRestClient {
         }
     }
 
+    public Iterable<Transaction> getCustomerTransactions(Long customerId){
+        String url = baseUrl+"/node";
+        try{
+            RestTemplate rest = new RestTemplate();
+            MultiValueMap<String,String> map = new LinkedMultiValueMap<String,String>();
+            String query = String.format("MATCH (c:Customer {id: %d})-[:Owns]->(:Account)-[:Has]->(t:Transaction) return t");
+            map.add("query",query);
+            ResponseEntity<Iterable> result = rest.postForEntity(url,map,Iterable.class);
+            return (Iterable<Transaction>)result.getBody();
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
     public boolean addAccount(Customer customer, Account account){
         String url = baseUrl+"/node";
         try{
@@ -127,6 +142,21 @@ public class NeoRestClient {
         }
     }
 
+    public Iterable<Transaction> getAccountTransactions(String accountNumber){
+        String url = baseUrl+"/node";
+        try{
+            RestTemplate rest = new RestTemplate();
+            MultiValueMap<String,String> map = new LinkedMultiValueMap<String,String>();
+            String query = String.format("MATCH (a:Account {accountNumber: '%s'})-[:Has]->(t:Transaction) return t", accountNumber);
+            map.add("query",query);
+            ResponseEntity<Iterable> result = rest.postForEntity(url,map,Iterable.class);
+            return (Iterable<Transaction>)result.getBody();
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
     public boolean addTransaction(Transaction transaction, Account sourceAccount, Account destinationAccount){
         String url = baseUrl+"/node";
         try{
@@ -145,6 +175,36 @@ public class NeoRestClient {
         }
         return true;
     }
+    
+    public Iterable<Transaction> getTransactions(){
+        String url = baseUrl+"/node";
+        try{
+            RestTemplate rest = new RestTemplate();
+            MultiValueMap<String,String> map = new LinkedMultiValueMap<String,String>();
+            String query = String.format("MATCH (t:Transaction) return t");
+            map.add("query",query);
+            ResponseEntity<Iterable> result = rest.postForEntity(url,map,Iterable.class);
+            return (Iterable<Transaction>)result.getBody();
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    public Transaction getTransactionById(Long transactionId){
+        String url = baseUrl+"/node";
+        try{
+            RestTemplate rest = new RestTemplate();
+            MultiValueMap<String,String> map = new LinkedMultiValueMap<String,String>();
+            String query = String.format("MATCH (t:Transactoin {id: %d}) return t", transactionId);
+            map.add("query",query);
+            ResponseEntity<Transaction> result = rest.postForEntity(url,map,Transaction.class);
+            return result.getBody();
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
 
     public boolean addFinancialInstitution(Institution institution){
         String url = baseUrl+"/node";
@@ -160,6 +220,51 @@ public class NeoRestClient {
             return false;
         }
         return true;
+    }
+    
+    public Iterable<Institution> getInstitutions(){
+        String url = baseUrl+"/node";
+        try{
+            RestTemplate rest = new RestTemplate();
+            MultiValueMap<String,String> map = new LinkedMultiValueMap<String,String>();
+            String query = String.format("MATCH (i:FI) return i");
+            map.add("query",query);
+            ResponseEntity<Iterable> result = rest.postForEntity(url,map,Iterable.class);
+            return (Iterable<Institution>)result.getBody();
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    public Institution getInstitutionByShortName(String shortName){
+        String url = baseUrl+"/node";
+        try{
+            RestTemplate rest = new RestTemplate();
+            MultiValueMap<String,String> map = new LinkedMultiValueMap<String,String>();
+            String query = String.format("MATCH (i:FI {shortName: '%s'}) return i", shortName);
+            map.add("query",query);
+            ResponseEntity<Institution> result = rest.postForEntity(url,map,Institution.class);
+            return result.getBody();
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+    
+    public Iterable<Account> getAccountsForInstitution(String shortName){
+        String url = baseUrl+"/node";
+        try{
+            RestTemplate rest = new RestTemplate();
+            MultiValueMap<String,String> map = new LinkedMultiValueMap<String,String>();
+            String query = String.format("MATCH (i:FI {shortName: '%s'})-[:Holds]->(a:Account) return a", shortName);
+            map.add("query",query);
+            ResponseEntity<Iterable> result = rest.postForEntity(url,map,Iterable.class);
+            return (Iterable<Account>)result.getBody();
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+            return null;
+        }
     }
 
     public String addNode(MultiValueMap<String,String> map){
