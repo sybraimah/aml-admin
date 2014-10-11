@@ -99,7 +99,7 @@ public class MonitoringService {
         return "done";
     }
 
-    public String parseQuery(String query,long customer, long accountId){
+    public String parseQuery(String query,String customer, String accountId){
         query = query.replaceAll("<cust_id>",String.valueOf(customer));
         query = query.replaceAll("<account_no>",String.valueOf(accountId));
         return query;

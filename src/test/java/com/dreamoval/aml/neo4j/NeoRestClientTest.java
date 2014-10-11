@@ -27,7 +27,7 @@ public class NeoRestClientTest {
         Gson gson = new Gson();
         Response result = rest.runQuery(map);
 
-        System.out.println(result.getData().toString());
+        System.out.println(result.getData());
 //        Response response = gson.fromJson(result,Response.class);
 
     }
