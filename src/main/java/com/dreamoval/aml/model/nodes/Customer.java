@@ -15,7 +15,7 @@ import org.springframework.data.neo4j.annotation.RelatedTo;
 public class Customer {
 
     @GraphId
-    private Long id;
+    private String id;
     private String name;
     private boolean kycVerified;
     private int riskScore;
@@ -24,7 +24,7 @@ public class Customer {
     public @Fetch
     Set<Account> accounts;
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 

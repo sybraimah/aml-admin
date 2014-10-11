@@ -9,7 +9,7 @@ import java.util.Date;
  */
 public class ITransaction {
     @Id
-    private Long id;
+    private String id;
     private String narrative;
     private String type;
     private String source;
@@ -20,11 +20,11 @@ public class ITransaction {
     private String sourceAccount;
     private String destinationAccount;
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

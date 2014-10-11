@@ -12,8 +12,9 @@ import org.springframework.data.neo4j.annotation.RelatedTo;
  */
 @NodeEntity
 public class Transaction {
+
     @GraphId
-    private long id;
+    private String id;
     private String narrative;
     private String type;
     private String source;
@@ -21,19 +22,17 @@ public class Transaction {
     private String flag;
     private Double amount;
     private Date date;
-
     @RelatedTo(type = "Has", direction = Direction.INCOMING)
-    private @Fetch    
+    private @Fetch
     Account sourceAccount;
-
     @RelatedTo(type = "Has", direction = Direction.INCOMING)
-    private @Fetch    
+    private @Fetch
     Account destinationAccount;
-    
+
     /**
      * @return the id
      */
-    public long getId() {
+    public String getId() {
         return id;
     }
 
