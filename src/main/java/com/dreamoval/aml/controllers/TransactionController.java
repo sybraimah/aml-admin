@@ -45,7 +45,6 @@ public class TransactionController {
         Account s = new Gson().fromJson(transaction, Account.class);
         Account d = new Gson().fromJson(transaction, Account.class);
         neo.addTransaction(t, s, d);
-        service.runQueries(t);
         jSONResponse.setStatus(true);
         jSONResponse.setMessage("Success");
         return jSONResponse;
@@ -59,7 +58,7 @@ public class TransactionController {
 
     @RequestMapping(value = "/transaction/get", method = RequestMethod.POST, consumes = "application/json")
     public @ResponseBody
-    Transaction fetchTransaction(Long transactionId) {
+    Object fetchTransaction(Long transactionId) {
         return neo.getTransactionById(transactionId);
     }
 
