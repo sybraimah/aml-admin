@@ -24,7 +24,7 @@ public class NeoRestClient {
         String url = baseUrl+"/node";
         try{
             RestTemplate rest = new RestTemplate();
-            MultiValueMap<String,String> map = new LinkedMultiValueMap<>();
+            MultiValueMap<String,String> map = new LinkedMultiValueMap<String,String>();
             String query = String.format("CREATE UNIQUE (:Customer {name: '%s', kycVerified: %s, riskScore: %d})", customer.getName(), customer.isKycVerified(), customer.getRiskScore());
             map.add("query",query);
 
@@ -40,7 +40,7 @@ public class NeoRestClient {
         String url = baseUrl+"/node";
         try{
             RestTemplate rest = new RestTemplate();
-            MultiValueMap<String,String> map = new LinkedMultiValueMap<>();
+            MultiValueMap<String,String> map = new LinkedMultiValueMap<String,String>();
             String query = String.format("MATCH (c:Customer {id: %d}) CREATE UNIQUE (c)-[:Owns]->(:Account {accountNumber: '%s', balance: 0, dateOpened: %d, status: 'ACTIVE'})", customer.getId(), account.getNumber(), account.getOpened().getTime());
             map.add("query",query);
 
@@ -56,7 +56,7 @@ public class NeoRestClient {
         String url = baseUrl+"/node";
         try{
             RestTemplate rest = new RestTemplate();
-            MultiValueMap<String,String> map = new LinkedMultiValueMap<>();
+            MultiValueMap<String,String> map = new LinkedMultiValueMap<String,String>();
             String query = String.format("MATCH (a:Account {id: %d}) CREATE UNIQUE (a)-[:Has]->(:Transaction {narrative: '%s', type: '%s', source: '%s', destination: '%s', flag: '%s', amount: '%f', date: '%d'})", sourceAccount.getId(), transaction.getNarrative(), sourceAccount.getNumber(), destinationAccount.getNumber(), transaction.getFlag(), transaction.getAmount(), transaction.getDate().getTime());
             map.add("query",query);
             rest.postForEntity(url,map,Transaction.class);
@@ -75,7 +75,7 @@ public class NeoRestClient {
         String url = baseUrl+"/node";
         try{
             RestTemplate rest = new RestTemplate();
-            MultiValueMap<String,String> map = new LinkedMultiValueMap<>();
+            MultiValueMap<String,String> map = new LinkedMultiValueMap<String,String>();
             String query = String.format("CREATE UNIQUE (:FI {name: '%s', shortName: '%s', country: '%s'})", institution.getName(), institution.getShortName(), institution.getCountry());
             map.add("query",query);
 
