@@ -3,12 +3,14 @@ package com.dreamoval.aml.mongo.services;
 import com.dreamoval.aml.mongo.domain.Rule;
 import com.dreamoval.aml.mongo.repositories.RuleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 /**
  * Created by dreamadmin on 10/11/14.
  */
+@Component
 public class RuleService {
 
     @Autowired
