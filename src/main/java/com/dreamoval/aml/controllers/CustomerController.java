@@ -13,6 +13,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
+    @RequestMapping(value="/customer/get", method=RequestMethod.POST, consumes="application/json")
+    public @ResponseBody Customer fetchCustomer(Long customerId){
+        return neo.getCustomerById(customerId);
+    }
+    
  *
  * @author dreamadmin
  */
@@ -39,6 +44,11 @@ public class CustomerController {
     @RequestMapping(value="/customer/accounts", method=RequestMethod.POST, consumes="application/json")
     public @ResponseBody Object getCustomerAccounts(Long customerId){
         return neo.getAccountsForCustomer(customerId);
-    }  
+    }    
+        
+    @RequestMapping(value="/customer/transactions", method=RequestMethod.POST, consumes="application/json")
+    public @ResponseBody Object getCustomerTransactions(Long customerId){
+        return neo.getCustomerTransactions(customerId);
+    }
     
 }
