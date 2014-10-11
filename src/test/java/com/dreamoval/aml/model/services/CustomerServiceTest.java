@@ -17,26 +17,21 @@ import static org.junit.Assert.*;
 @SpringApplicationConfiguration(classes = Application.class)
 public class CustomerServiceTest {
 
-    @Autowired
-    CustomerService customerService;
-
-    @Autowired
-    GraphDatabase graphDatabase;
 
     @Test
     public void testFindAll() throws Exception {
-        Transaction tx = graphDatabase.beginTx();
-        try{
-            Iterable<Customer> result = customerService.findAll();
-
-            System.out.println("Test results");
-            for(Customer customer:result){
-                System.out.println(customer.toString());
-            }
-            tx.success();
-        }finally {
-            tx.close();
-        }
+//        Transaction tx = graphDatabase.beginTx();
+//        try{
+//            Iterable<Customer> result = customerService.findAll();
+//
+//            System.out.println("Test results");
+//            for(Customer customer:result){
+//                System.out.println(customer.toString());
+//            }
+//            tx.success();
+//        }finally {
+//            tx.close();
+//        }
 
 
 
