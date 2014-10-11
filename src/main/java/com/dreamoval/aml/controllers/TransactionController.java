@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class TransactionController {
 
     @Autowired
-    private NeoRestClient neoRestClient;
+    private NeoRestClient neo;
 
     @RequestMapping(value = "/send/transactions", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
@@ -40,9 +40,27 @@ public class TransactionController {
         Transaction t = new Gson().fromJson(transaction, Transaction.class);
         Account s = new Gson().fromJson(transaction, Account.class);
         Account d = new Gson().fromJson(transaction, Account.class);
-        neoRestClient.addTransaction(t, s, d);
+        neo.addTransaction(t, s, d);
         jSONResponse.setStatus(true);
         jSONResponse.setMessage("Success");
         return jSONResponse;
+    }
+
+    @RequestMapping(value = "/transaction/all", method = RequestMethod.POST, consumes = "application/json")
+    public @ResponseBody
+    Object getTransactions() {
+        return neo.getTransactions();
+    }
+
+    @RequestMapping(value = "/transaction/get", method = RequestMethod.POST, consumes = "application/json")
+    public @ResponseBody
+    Transaction fetchTransaction(Long transactionId) {
+        return neo.getTransactionById(transactionId);
+    }
+
+    @RequestMapping(value = "/transaction/create", method = RequestMethod.POST, consumes = "application/json")
+    public @ResponseBody
+    boolean createTransaction(Transaction transaction) {
+        return neo.addTransaction(transaction, transaction.getSourceAccount(), transaction.getDestinationAccount());
     }
 }
