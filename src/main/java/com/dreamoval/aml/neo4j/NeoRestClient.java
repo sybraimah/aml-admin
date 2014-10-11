@@ -36,6 +36,51 @@ public class NeoRestClient {
         return true;
     }
 
+    public Iterable<Customer> getCustomers(){
+        String url = baseUrl+"/node";
+        try{
+            RestTemplate rest = new RestTemplate();
+            MultiValueMap<String,String> map = new LinkedMultiValueMap<String,String>();
+            String query = String.format("MATCH (c:Customer) return c");
+            map.add("query",query);
+            ResponseEntity<Iterable> result = rest.postForEntity(url,map,Iterable.class);
+            return (Iterable<Customer>)result.getBody();
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    public Customer getCustomerById(Long customerId){
+        String url = baseUrl+"/node";
+        try{
+            RestTemplate rest = new RestTemplate();
+            MultiValueMap<String,String> map = new LinkedMultiValueMap<String,String>();
+            String query = String.format("MATCH (c:Customer {id: %d}) return c", customerId);
+            map.add("query",query);
+            ResponseEntity<Customer> result = rest.postForEntity(url,map,Customer.class);
+            return result.getBody();
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+    
+    public Iterable<Account> getAccountsForCustomer(Long customerId){
+        String url = baseUrl+"/node";
+        try{
+            RestTemplate rest = new RestTemplate();
+            MultiValueMap<String,String> map = new LinkedMultiValueMap<String,String>();
+            String query = String.format("MATCH (c:Customer {id: %d})-[:Owns]->(a:Account) return a", customerId);
+            map.add("query",query);
+            ResponseEntity<Iterable> result = rest.postForEntity(url,map,Iterable.class);
+            return (Iterable<Account>)result.getBody();
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
     public boolean addAccount(Customer customer, Account account){
         String url = baseUrl+"/node";
         try{
@@ -52,16 +97,46 @@ public class NeoRestClient {
         return true;
     }
 
+    public Iterable<Account> getAccounts(){
+        String url = baseUrl+"/node";
+        try{
+            RestTemplate rest = new RestTemplate();
+            MultiValueMap<String,String> map = new LinkedMultiValueMap<String,String>();
+            String query = String.format("MATCH (a:Account) return a");
+            map.add("query",query);
+            ResponseEntity<Iterable> result = rest.postForEntity(url,map,Iterable.class);
+            return (Iterable<Account>)result.getBody();
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    public Account getAccountByNumber(String accountNumber){
+        String url = baseUrl+"/node";
+        try{
+            RestTemplate rest = new RestTemplate();
+            MultiValueMap<String,String> map = new LinkedMultiValueMap<String,String>();
+            String query = String.format("MATCH (a:Account {accountNumber: %s}) return a", accountNumber);
+            map.add("query",query);
+            ResponseEntity<Account> result = rest.postForEntity(url,map,Account.class);
+            return result.getBody();
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
     public boolean addTransaction(Transaction transaction, Account sourceAccount, Account destinationAccount){
         String url = baseUrl+"/node";
         try{
             RestTemplate rest = new RestTemplate();
             MultiValueMap<String,String> map = new LinkedMultiValueMap<String,String>();
-            String query = String.format("MATCH (a:Account {id: %d}) CREATE UNIQUE (a)-[:Has]->(:Transaction {narrative: '%s', type: '%s', source: '%s', destination: '%s', flag: '%s', amount: '%f', date: '%d'})", sourceAccount.getId(), transaction.getNarrative(), sourceAccount.getNumber(), destinationAccount.getNumber(), transaction.getFlag(), transaction.getAmount(), transaction.getDate().getTime());
+            String query = String.format("MATCH (a:Account {accountNumber: '%s'}) CREATE UNIQUE (a)-[:Has]->(:Transaction {narrative: '%s', type: '%s', source: '%s', destination: '%s', flag: '%s', amount: '%f', date: '%d'})", transaction.getSource(), transaction.getNarrative(), sourceAccount.getNumber(), destinationAccount.getNumber(), transaction.getFlag(), transaction.getAmount(), transaction.getDate().getTime());
             map.add("query",query);
             rest.postForEntity(url,map,Transaction.class);
             
-            query = String.format("MATCH (b:Account {id: %d}), (t:Transaction {id: %d}) CREATE UNIQUE (b)-[:Has]->(t)", destinationAccount.getId(), transaction.getId());
+            query = String.format("MATCH (b:Account {accountNumber: '%s'}), (t:Transaction {id: %d}) CREATE UNIQUE (b)-[:Has]->(t)", transaction.getDestination(), transaction.getId());
             map.add("query",query);
             rest.postForEntity(url,map,Account.class);
         }catch(Exception e){
