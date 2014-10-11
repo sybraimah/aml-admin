@@ -15,7 +15,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 public class MongoConfiguration extends AbstractMongoConfiguration {
     @Override
     protected String getDatabaseName() {
-        return "smpp-client";
+        return "aml-admin";
     }
 
     @Override
