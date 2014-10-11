@@ -39,7 +39,7 @@ public class MonitoringService {
             Response result = rest.runQuery(map);
             if(result.getData().size()>0){
                 //get query for for updating customer
-//                rest.updateNode()
+                rest.updateNode(String.valueOf(transaction.getSourceAccount().getId()));
                 //run query
 
                 //send notification
@@ -51,7 +51,7 @@ public class MonitoringService {
             result = rest.runQuery(map);
             if(result.getData().size()>0){
                 //get query for for updating customer
-//                rest.updateNode()
+                rest.updateNode(String.valueOf(transaction.getDestinationAccount().getId()));
                 //run query
 
                 //send notification

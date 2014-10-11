@@ -104,17 +104,17 @@ public class NeoRestClient {
         return "";
     }
 
-    public String updateNode(String value,String id){
-        String url = baseUrl+"/node/"+id+"/properties/riskScore";
+    public String updateNode(String id){
+        String url = baseUrl+"/cypher";
         try{
             RestTemplate rest = new RestTemplate();
 //            HttpHeaders headers = new HttpHeaders();
 //            headers.setContentType(MediaType.APPLICATION_JSON);
-//            MultiValueMap<String,String> map = new LinkedMultiValueMap<String, String>();
-//            map.add("name","Steve");
+            MultiValueMap<String,String> map = new LinkedMultiValueMap<String, String>();
+            map.add("query","MATCH (:Transaction {id:"+id+"})<-[:Has]-(:Account)<-[:Owns]-(c:Customer) SET c.riskScore = (c.riskScore + 1) return c");
 //            HttpEntity<String> entity = new HttpEntity<String>(node,headers);
 
-            ResponseEntity<String> result = rest.postForEntity(url,value,String.class);
+            ResponseEntity<String> result = rest.postForEntity(url,map,String.class);
         }catch(Exception e){
             System.out.println(e.getMessage());
         }
@@ -125,13 +125,6 @@ public class NeoRestClient {
         String url = baseUrl+"/cypher";
         try{
             RestTemplate rest = new RestTemplate();
-//            HttpHeaders headers = new HttpHeaders();
-//            headers.setContentType(MediaType.APPLICATION_JSON);
-
-//            MultiValueMap<String,String> map = new LinkedMultiValueMap<String, String>();
-//            map.add("name","Steve");
-//            HttpEntity<String> entity = new HttpEntity<String>(node,headers);
-
             ResponseEntity<Response> result = rest.postForEntity(url,map, Response.class);
             return result.getBody();
         }catch(Exception e){
