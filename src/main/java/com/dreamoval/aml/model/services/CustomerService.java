@@ -14,8 +14,8 @@ import org.springframework.util.MultiValueMap;
 
 @Component
 public class CustomerService {
-    @Autowired
-    CustomerRepository customerRepository;
+//    @Autowired
+//    CustomerRepository customerRepository;
     @Autowired
     NeoRestClient neo;
 
