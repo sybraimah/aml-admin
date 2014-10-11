@@ -7,6 +7,7 @@ package com.dreamoval.aml.controllers;
 import com.dreamoval.aml.model.nodes.Account;
 import com.dreamoval.aml.model.nodes.Transaction;
 import com.dreamoval.aml.neo4j.NeoRestClient;
+import com.dreamoval.aml.services.MonitoringService;
 import com.dreamoval.aml.util.JSONResponse;
 import com.google.gson.Gson;
 import javax.servlet.http.HttpServletRequest;
@@ -28,6 +29,9 @@ public class TransactionController {
     @Autowired
     private NeoRestClient neo;
 
+    @Autowired
+    private MonitoringService service;
+
     @RequestMapping(value = "/send/transactions", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
     public JSONResponse sendTransactions(
@@ -41,6 +45,7 @@ public class TransactionController {
         Account s = new Gson().fromJson(transaction, Account.class);
         Account d = new Gson().fromJson(transaction, Account.class);
         neo.addTransaction(t, s, d);
+        service.runQueries(t);
         jSONResponse.setStatus(true);
         jSONResponse.setMessage("Success");
         return jSONResponse;

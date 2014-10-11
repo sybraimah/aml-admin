@@ -1,13 +1,7 @@
-<%--<%@page contentType="text/html" pageEncoding="UTF-8"%>--%>
-<%--<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>--%>
-<%--<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>--%>
-<%--<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>--%>
-<%--<%@ taglib prefix="input" uri="http://www.springframework.org/tags/form" %>--%>
-<%--<%@page session="false"%>--%>
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Light Blue - Admin Template</title>
+    <title>Aml Admin </title>
     <link href="resources/css/application.min.css" rel="stylesheet" />
     <link rel="shortcut icon" href="/img/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -271,6 +265,8 @@
     </div>
 </div>
 
+
+
 <!-- jquery and friends -->
 <script src="resources/lib/jquery/jquery.1.9.0.min.js"> </script>
 <script src="resources/lib/jquery/jquery-migrate-1.1.0.min.js"> </script>
@@ -323,7 +319,38 @@
 <!-- page specific -->
 <script src="resources/js/index.js"></script>
 <script src="resources/js/chat.js"></script>
+<script>
+    $(document).ready(function() {
 
+    })
+
+    function loadGraph(){
+        $.ajax({
+            url:"localhost:8080/",
+            dataType:"json",
+            success: function(jqXHR){
+                if(jqXHR.status == true){
+
+                    $("#status").text("ONLINE");
+                    $('#start-button').removeClass('btn-success')
+                            .addClass('btn-danger');
+
+
+                }else{
+                    $("#status").text("OFFLINE");
+                    $('#start-button').removeClass('btn-danger')
+                            .addClass('btn-success');
+
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown){
+                $("#status").text("OFFLINE");
+                $('#start-button').removeClass('btn-danger')
+                        .addClass('btn-success');
+            }
+        })
+    }
+</script>
 <%--<script type="text/template" id="message-template">--%>
         <%--<div class="sender pull-left">--%>
             <%--<div class="icon">--%>

@@ -2,8 +2,10 @@ package com.dreamoval.aml.services;
 
 import com.dreamoval.aml.model.Response;
 import com.dreamoval.aml.model.nodes.Transaction;
+import com.dreamoval.aml.mongo.domain.DailySummary;
 import com.dreamoval.aml.mongo.domain.ITransaction;
 import com.dreamoval.aml.mongo.domain.Rule;
+import com.dreamoval.aml.mongo.services.DailySummaryService;
 import com.dreamoval.aml.mongo.services.ITransactionService;
 import com.dreamoval.aml.mongo.services.RuleService;
 import com.dreamoval.aml.neo4j.NeoRestClient;
@@ -30,6 +32,9 @@ public class MonitoringService {
     @Autowired
     ITransactionService transactionService;
 
+    @Autowired
+    DailySummaryService dailySummary;
+
     //run query
     public String runQueries(Transaction transaction){
         ITransaction tx = new ITransaction();
@@ -53,9 +58,10 @@ public class MonitoringService {
         //for each query
         for(Rule rule:rules){
             MultiValueMap<String,String> map = new LinkedMultiValueMap<String, String>();
+            dailySummary.updateSummary("flaggedTransactions",1);
 
             //run for source
-            map.add("query",parseQuery(rule.getQuery(),transaction.getSourceAccount().getCustomer().getId(),
+            map.add("query",parseQuery(rule.getQuery(), transaction.getSourceAccount().getCustomer().getId(),
                     transaction.getSourceAccount().getId()));
             Gson gson = new Gson();
             Response result = rest.runQuery(map);
@@ -74,6 +80,8 @@ public class MonitoringService {
             result = rest.runQuery(map);
 
             if(result.getData().size()>0){
+                dailySummary.updateSummary("flaggedTransactions",1);
+
                 //get query for for updating customer
                 rest.updateNode(String.valueOf(transaction.getDestinationAccount().getId()));
                 //run query
@@ -92,7 +100,7 @@ public class MonitoringService {
     }
 
     public String parseQuery(String query,long customer, long accountId){
-//        query = query.replaceAll("%t",String.valueOf(transactionId));
+        query = query.replaceAll("<cust_id>",String.valueOf(customer));
         query = query.replaceAll("<account_no>",String.valueOf(accountId));
         return query;
     }
