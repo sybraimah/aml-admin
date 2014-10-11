@@ -15,10 +15,10 @@ import java.util.List;
 
 @Component
 public class CustomerService {
-    @Autowired
-    CustomerRepository customerRepository;
-
-    public Iterable<Customer> findAll(){
-        return customerRepository.findAll();
-    }
+//    @Autowired
+//    CustomerRepository customerRepository;
+//
+//    public Iterable<Customer> findAll(){
+//        return customerRepository.findAll();
+//    }
 }

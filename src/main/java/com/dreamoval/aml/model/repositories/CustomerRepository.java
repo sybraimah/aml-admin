@@ -8,6 +8,5 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 /**
  * Created by dreamadmin on 10/10/14.
  */
-@RepositoryRestResource(collectionResourceRel = "customer", path = "customer")
-public interface CustomerRepository extends GraphRepository<Customer> {
+public interface CustomerRepository {
 }
