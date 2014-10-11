@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class CustomerController {
 
     @Autowired
-    private NeoRestClient neoRestClient;
+    private NeoRestClient neo;
 
     @RequestMapping(value = "/customer/create", method = RequestMethod.GET)
     @ResponseBody
@@ -41,9 +41,9 @@ public class CustomerController {
         Customer c = new Gson().fromJson(customer, Customer.class);
         Account a = new Gson().fromJson(account, Account.class);
         Institution i = new Gson().fromJson(account, Institution.class);
-        neoRestClient.addCustomer(c);
-        neoRestClient.addAccount(c, a);
-        neoRestClient.addFinancialInstitution(i);
+        neo.addCustomer(c);
+        neo.addAccount(c, a);
+        neo.addFinancialInstitution(i);
         jSONResponse.setStatus(true);
         jSONResponse.setMessage("Success");
         return jSONResponse;
@@ -59,4 +59,20 @@ public class CustomerController {
         jSONResponse.setMessage("Success");
         return jSONResponse;
     }
+    
+    @RequestMapping(value="/customer/get", method=RequestMethod.POST, consumes="application/json")
+    public @ResponseBody Customer fetchCustomer(Long customerId){
+        return neo.getCustomerById(customerId);
+    }
+    
+    @RequestMapping(value="/customer/create", method=RequestMethod.POST, consumes="application/json")
+    public @ResponseBody boolean createCustomer(Customer customer){
+        return neo.addCustomer(customer);
+    } 
+    
+    @RequestMapping(value="/customer/accounts", method=RequestMethod.POST, consumes="application/json")
+    public @ResponseBody Object getCustomerAccounts(Long customerId){
+        return neo.getAccountsForCustomer(customerId);
+    }  
+    
 }

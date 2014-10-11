@@ -3,6 +3,7 @@ package com.dreamoval.aml.mongo.services;
 import com.dreamoval.aml.mongo.domain.Rule;
 import com.dreamoval.aml.mongo.repositories.RuleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import org.springframework.stereotype.Service;
